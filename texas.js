@@ -6,7 +6,6 @@ var _ = require('underscore');
 var fs = require('fs');
 var crypto = require('crypto');
 var zlib = require('zlib');
-var memcpy = require('memcpy');
 
 // ## Definitions
 
@@ -32,9 +31,9 @@ var hands = ['Invalid', 'High Card', 'One Pair', 'Two Pairs',
 // Loads the look-up table.
 var buffer = fs.readFileSync(__dirname + '/HandRanks.dat.gz');
 var zbuffer = zlib.gunzipSync(buffer);
-var bufferArray = new ArrayBuffer(zbuffer.length);
-memcpy(bufferArray,0,zbuffer);
-var evaluator = new Int32Array(bufferArray);
+// modified from: http://stackoverflow.com/questions/8609289/convert-a-binary-nodejs-buffer-to-javascript-arraybuffer/31394257#31394257
+var arrayBuffer = zbuffer.buffer.slice(zbuffer.byteOffset, zbuffer.byteOffset + zbuffer.byteLength);
+var evaluator = new Int32Array(arrayBuffer);
 
 // ## Internal Functions
 
